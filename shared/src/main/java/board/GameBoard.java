@@ -9,14 +9,12 @@ import java.util.HashMap;
 public class GameBoard {
     public static void main(String[] args) {
         GameBoard gameBoard = new GameBoard();
-        gameBoard.setupWorldBoard();
         gameBoard.printAdjacencies();
     }
     public HashMap<Region, ArrayList<Piece>> board;
     public GameBoard() {
-        // Each position should have a Map of Pieces.
-        // Region should be its own class
         board = new HashMap<>();
+        setupWorldBoard();
     }
 
     private void setupWorldBoard() {
