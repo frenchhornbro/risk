@@ -1,6 +1,6 @@
 package server;
 
-import handlers.*;
+import handler.*;
 import spark.*;
 
 public class Server {
@@ -29,12 +29,6 @@ public class Server {
 
     private void createRoutes() {
         //TODO: Also include routes to login, create a new user, list games, and join a game
-        //Purchase
-        //Place
-        //Attack
-        //Reinforce
-        //Next phase
-        //End turn
         Spark.put("/purchase", this.purchaseHandler::purchase);
         Spark.put("/place", this.placeHandler::place);
         Spark.put("/attack", this.attackHandler::attack);
