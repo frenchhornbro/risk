@@ -2,7 +2,7 @@ package dataAccess;
 
 import exceptions.DataAccessError;
 
-public class GameDataAccess {
+public class GameDataAccess extends DataAccess {
     public GameDataAccess() {
 
     }

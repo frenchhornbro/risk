@@ -26,3 +26,4 @@ replay_pid*
 # Manually added
 .idea
 TODO
+db.properties
