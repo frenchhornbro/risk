@@ -3,7 +3,7 @@ package dataAccess;
 import exceptions.DataAccessError;
 
 public class GameDataAccess extends DataAccess {
-    public GameDataAccess() {
+    public GameDataAccess() throws DataAccessError {
 
     }
     public void validateGameID(String gameID) throws DataAccessError {

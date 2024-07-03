@@ -3,7 +3,7 @@ package dataAccess;
 import exceptions.DataAccessError;
 
 public class UserDataAccess extends DataAccess {
-    public UserDataAccess() {
+    public UserDataAccess() throws DataAccessError {
 
     }
     public void validateAuthToken(String authToken) throws DataAccessError {
@@ -11,5 +11,6 @@ public class UserDataAccess extends DataAccess {
     }
     public String getUsername(String authToken) throws DataAccessError {
         //TODO
+        return "placeholderUsername";
     }
 }

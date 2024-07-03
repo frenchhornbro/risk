@@ -8,9 +8,14 @@ import exceptions.ServiceError;
 public class Service {
     private final UserDataAccess userDataAccess;
     private final GameDataAccess gameDataAccess;
-    public Service() {
-        userDataAccess = new UserDataAccess();
-        gameDataAccess = new GameDataAccess();
+    public Service() throws ServiceError {
+        try {
+            userDataAccess = new UserDataAccess();
+            gameDataAccess = new GameDataAccess();
+        }
+        catch (DataAccessError dataAccessError) {
+            throw new ServiceError(dataAccessError.getMessage(), 500);
+        }
     }
 
     /**
@@ -33,5 +38,6 @@ public class Service {
     }
     public String makePurchase(String pieceToBuy) {
         //TODO: Throw an error if something goes wrong here
+        return "placeholderUpdatedWallet";
     }
 }

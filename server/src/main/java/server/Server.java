@@ -1,22 +1,28 @@
 package server;
 
+import exceptions.ServerError;
 import handler.*;
 import spark.*;
 
 public class Server {
-    private final PurchaseHandler purchaseHandler;
-    private final PlaceHandler placeHandler;
-    private final AttackHandler attackHandler;
-    private final ReinforceHandler reinforceHandler;
-    private final ChangePhaseHandler changePhaseHandler;
-    private final EndTurnHandler endTurnHandler;
+    private PurchaseHandler purchaseHandler;
+    private PlaceHandler placeHandler;
+    private AttackHandler attackHandler;
+    private ReinforceHandler reinforceHandler;
+    private ChangePhaseHandler changePhaseHandler;
+    private EndTurnHandler endTurnHandler;
     public Server() {
-        purchaseHandler = new PurchaseHandler();
-        placeHandler = new PlaceHandler();
-        attackHandler = new AttackHandler();
-        reinforceHandler = new ReinforceHandler();
-        changePhaseHandler = new ChangePhaseHandler();
-        endTurnHandler = new EndTurnHandler();
+        try {
+            purchaseHandler = new PurchaseHandler();
+            placeHandler = new PlaceHandler();
+            attackHandler = new AttackHandler();
+            reinforceHandler = new ReinforceHandler();
+            changePhaseHandler = new ChangePhaseHandler();
+            endTurnHandler = new EndTurnHandler();
+        }
+        catch (ServerError serverError) {
+            //TODO: Log error
+        }
     }
 
     public int run(int portNum) {
