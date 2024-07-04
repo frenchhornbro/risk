@@ -27,7 +27,7 @@ public class Service {
             String username = userDataAccess.getUsername(authToken);
             gameDataAccess.validateGameID(gameID);
             gameDataAccess.userInGame(gameID, username);
-            gameDataAccess.isClientsTurn(gameID, username);
+            gameDataAccess.verifyClientTurn(gameID, username);
         }
         catch (DataAccessError dataAccessError) {
             throw new ServiceError(dataAccessError.getMessage(), dataAccessError.getErrorCode());

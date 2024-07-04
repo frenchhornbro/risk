@@ -43,7 +43,8 @@ abstract public class DataAccess {
                 """
                 CREATE TABLE IF NOT EXISTS userData(
                     username VARCHAR(256) NOT NULL PRIMARY KEY,
-                    password VARCHAR(256) NOT NULL
+                    password VARCHAR(256) NOT NULL,
+                    authToken VARCHAR(36) NOT NULL
                 );
                 """,
                 """
@@ -52,11 +53,11 @@ abstract public class DataAccess {
                     player1 VARCHAR(256),
                     player2 VARCHAR(256),
                     player3 VARCHAR(256),
-                    game LONGTEXT
+                    gameData LONGTEXT
                 );
                 """
         ));
-        
+
         for (String createStatement : createStatements) {
             updateDB(true, createStatement);
         }
