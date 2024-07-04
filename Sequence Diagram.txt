@@ -38,10 +38,10 @@ Service-->Server:Yes
 note over Server:If each response is "Yes"
 Server->Service:Make purchase
 Service->db:Put piece in client's purchasedPieces
-Service->db:Deduct cost from client's wallet
-db-->Service:Updated wallet
-Service-->Server:Updated wallet
-Server-->Client:200, updated wallet
+Service->db:Deduct cost from client's balance
+db-->Service:Updated balance
+Service-->Server:Updated balance
+Server-->Client:200, updated balance
 end
 
 
@@ -189,7 +189,7 @@ end
 
 
 
-group #lack End Turn #white
+group #black End Turn #white
 Client->Server: authToken, gameID
 
 Server->Service: Authenticate authToken, gameID

@@ -1,6 +1,9 @@
 package dataAccess;
 
+import com.google.gson.Gson;
 import exceptions.DataAccessError;
+import game.GameData;
+import game.PlayerData;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -50,9 +53,6 @@ abstract public class DataAccess {
                 """
                 CREATE TABLE IF NOT EXISTS gameData(
                     gameID INT NOT NULL PRIMARY KEY AUTO_INCREMENT,
-                    player1 VARCHAR(256),
-                    player2 VARCHAR(256),
-                    player3 VARCHAR(256),
                     gameData LONGTEXT
                 );
                 """
@@ -113,5 +113,20 @@ abstract public class DataAccess {
         catch (SQLException sqlException) {
             throw new DataAccessError("Error updating DB: " + sqlException.getMessage(), 500);
         }
+    }
+
+    protected GameData getGame(String gameID) throws DataAccessError {
+        ArrayList<String> gameData = queryDB("SELECT gameData FROM gameData WHERE gameID=?", gameID);
+        if (gameData.isEmpty()) throw new DataAccessError("Invalid game ID", 400);
+        return new Gson().fromJson(gameData.getFirst(), GameData.class);
+    }
+
+    protected PlayerData getPlayer(String gameID, String username) throws DataAccessError {
+        GameData gameData = getGame(gameID);
+        ArrayList<PlayerData> players = gameData.getPlayers();
+        for (PlayerData player : players) {
+            if (player.getUsername().equals(username)) return player;
+        }
+        throw new DataAccessError("User not in game", 400);
     }
 }

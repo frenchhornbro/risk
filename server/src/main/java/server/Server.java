@@ -1,6 +1,6 @@
 package server;
 
-import exceptions.ServerError;
+import exceptions.DataAccessError;
 import handler.*;
 import spark.*;
 
@@ -20,7 +20,7 @@ public class Server {
             changePhaseHandler = new ChangePhaseHandler();
             endTurnHandler = new EndTurnHandler();
         }
-        catch (ServerError serverError) {
+        catch (DataAccessError dataAccessError) {
             //TODO: Log error
         }
     }

@@ -7,4 +7,8 @@ public abstract class Piece {
     protected int attackNum;
     protected int teamNum;
     protected String playerColor;
+
+    public int getCost() {
+        return cost;
+    }
 }
