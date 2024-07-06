@@ -11,4 +11,9 @@ public abstract class Piece {
     public int getCost() {
         return cost;
     }
+
+    @Override
+    public String toString() {
+        return this.getClass().getSimpleName();
+    }
 }

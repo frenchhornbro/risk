@@ -29,4 +29,9 @@ public class PlayerData {
     public void setPurchasedPieces(ArrayList<Piece> purchasedPieces) {
         this.purchasedPieces = purchasedPieces;
     }
+
+    @Override
+    public String toString() {
+        return "Username: " + username + ", Balance: " + balance + ", Purchased pieces: " + purchasedPieces + "\n";
+    }
 }

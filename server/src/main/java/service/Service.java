@@ -3,6 +3,7 @@ package service;
 import dataAccess.GameDataAccess;
 import dataAccess.UserDataAccess;
 import exceptions.DataAccessError;
+import exceptions.UserError;
 
 public class Service {
     private final UserDataAccess userDataAccess;
@@ -25,10 +26,9 @@ public class Service {
     }
     public void purchaseReqs(String username, String gameID, String pieceToBuy) throws DataAccessError {
         gameDataAccess.verifyGamePhase(gameID, "purchase");
-        gameDataAccess.verifyClientWallet(username, gameID, pieceToBuy);
+        gameDataAccess.verifyClientBalance(username, gameID, pieceToBuy);
     }
-    public String makePurchase(String pieceToBuy) {
-        //TODO: Throw an error if something goes wrong here
-        return "placeholderUpdatedBalance";
+    public int makePurchase(String username, String gameID, String pieceToBuy) throws DataAccessError, UserError {
+        return gameDataAccess.makePurchase(username, gameID, pieceToBuy);
     }
 }

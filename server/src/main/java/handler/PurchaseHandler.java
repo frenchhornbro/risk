@@ -27,7 +27,7 @@ public class PurchaseHandler {
             String username = service.authenticate(authToken, gameID);
             service.purchaseReqs(username, gameID, pieceToBuy);
             response.status(200);
-            response.body(serial.toJson(service.makePurchase(pieceToBuy)));
+            response.body(serial.toJson(service.makePurchase(username, gameID, pieceToBuy)));
         }
         catch (DataAccessError dataAccessError) {
             response.status(dataAccessError.getErrorCode());

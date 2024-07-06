@@ -2,6 +2,7 @@ package dataAccess;
 
 import com.google.gson.Gson;
 import exceptions.DataAccessError;
+import exceptions.UserError;
 import game.GameData;
 import game.PlayerData;
 
@@ -10,6 +11,7 @@ import java.io.InputStream;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.Properties;
 
 abstract public class DataAccess {
@@ -74,11 +76,11 @@ abstract public class DataAccess {
         }
     }
 
-    private PreparedStatement getCompletedStatement(Connection connection, String statement, String... params) throws DataAccessError {
+    private PreparedStatement getCompletedStatement(Connection connection, String statement, Object... params) throws DataAccessError {
         try {
             PreparedStatement preparedStatement = connection.prepareStatement(statement);
             for (int i = 0; i < params.length; i++) {
-                preparedStatement.setString(i+1, params[i]);
+                preparedStatement.setString(i+1, params[i].toString());
             }
             return preparedStatement;
         }
@@ -87,7 +89,7 @@ abstract public class DataAccess {
         }
     }
 
-    protected ArrayList<String> queryDB(String queryStatement, String... params) throws DataAccessError {
+    protected ArrayList<String> queryDB(String queryStatement, Object... params) throws DataAccessError {
         try (
             Connection connection = getConnection(true);
             PreparedStatement completedStatement = getCompletedStatement(connection, queryStatement, params);
@@ -104,7 +106,8 @@ abstract public class DataAccess {
         }
     }
 
-    protected void updateDB(boolean dbInitialized, String updatedStatement, String... params) throws DataAccessError {
+    protected void updateDB(boolean dbInitialized, String updatedStatement, Object... params) throws DataAccessError {
+        if (this.getClass() != DataAccess.class) dbInitialized = true;
         try (Connection connection = getConnection(dbInitialized)) {
             try (PreparedStatement completedStatement = getCompletedStatement(connection, updatedStatement, params)) {
                 completedStatement.executeUpdate();
@@ -123,10 +126,15 @@ abstract public class DataAccess {
 
     protected PlayerData getPlayer(String gameID, String username) throws DataAccessError {
         GameData gameData = getGame(gameID);
-        ArrayList<PlayerData> players = gameData.getPlayers();
-        for (PlayerData player : players) {
-            if (player.getUsername().equals(username)) return player;
-        }
-        throw new DataAccessError("User not in game", 400);
+        HashMap<String, PlayerData> players = gameData.getPlayers();
+        PlayerData player = players.get(username);
+        if (player == null) throw new DataAccessError("User not in game", 400);
+        return player;
+    }
+
+    protected void setPlayer(String gameID, PlayerData playerData) throws DataAccessError, UserError {
+        GameData gameData = getGame(gameID);
+        gameData.updatePlayer(playerData);
+        updateDB(true, "INSERT INTO GameData (gameID, gameData) VALUES (?, ?)", gameID, gameData);
     }
 }
