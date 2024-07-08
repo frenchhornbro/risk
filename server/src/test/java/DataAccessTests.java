@@ -1,7 +1,13 @@
 import dataAccess.GameDataAccess;
 import dataAccess.UserDataAccess;
 import exceptions.DataAccessError;
+import exceptions.UserError;
+import game.GameData;
+import game.PlayerData;
 import org.junit.jupiter.api.*;
+import pieces.*;
+
+import java.util.HashMap;
 
 public class DataAccessTests {
     private final UserDataAccess userDataAccess;
@@ -29,6 +35,30 @@ public class DataAccessTests {
     @Test
     public void validAuth() {
 
+    }
+
+    @Test
+    public void printGameDataToString() {
+        GameData gameData = new GameData();
+        gameData.setPhase(GameData.phaseType.Purchase);
+        gameData.setPlayerTurn("thisPlayerTurn");
+        PlayerData player1 = new PlayerData("username1");
+        player1.setPurchasedPieces(
+                new HashMap<>() {{
+                    put(new Infantry(), 3);
+                    put(new Tank(), 2);
+                }});
+        player1.setPurchasedPieces(new HashMap<>(){});
+        try {
+            gameData.updatePlayer(player1);
+            gameData.updatePlayer(new PlayerData("username2"));
+            gameData.updatePlayer(new PlayerData("username3"));
+            gameData.updatePlayer(new PlayerData("username4"));
+        }
+        catch (UserError userError) {
+            System.out.println(userError);
+        }
+        System.out.println(gameData);
     }
 
     //TODO: Test what happens if I pass more or fewer than required parameters into queryDB() and updateDB()

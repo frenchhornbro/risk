@@ -73,9 +73,9 @@ note over Server:If each response is "Yes"
 Server->Service:Place piece
 Service->db:Add piece to region
 Service->db:Remove piece from client's purchasedPieces
-db-->Service:Updated board
-Service-->Server:Updated board
-Server-->Client:200, updated board
+db-->Service:Updated gameData
+Service-->Server:Updated gameData
+Server-->Client:200, updated gameData
 end
 
 
@@ -116,9 +116,9 @@ note over Service: If enemy wins:
 Service->db:Remove dead enemy pieces from toRegion
 Service->db:Remove all client pieces from toRegion
 
-db-->Service:Updated board
-Service-->Server:Updated board
-Server-->Client:200, updated board
+db-->Service:Updated gameData
+Service-->Server:Updated gameData
+Server-->Client:200, updated gameData
 end
 
 
@@ -151,9 +151,9 @@ Service-->Server:Yes
 Server->Service:Reinforce pieces
 Service->db:Add pieces to toRegion
 Service->db:Remove pieces from fromRegion
-db-->Service:Updated board
-Service-->Server:Updated board
-Server-->Client:200, updated board
+db-->Service:Updated gameData
+Service-->Server:Updated gameData
+Server-->Client:200, updated gameData
 end
 
 

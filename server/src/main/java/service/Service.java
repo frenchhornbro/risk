@@ -30,13 +30,15 @@ public class Service {
         gameDataAccess.verifyGamePhase(gameID, GameData.phaseType.Purchase);
         gameDataAccess.verifyClientBalance(username, gameID, pieceToBuy);
     }
-    public void placeReqs(String authToken, String gameID, Piece piece, int regionID) throws DataAccessError {
-        String username = userDataAccess.getUsername(authToken);
+    public void placeReqs(String username, String gameID, Piece piece, int regionID) throws DataAccessError {
         gameDataAccess.verifyGamePhase(gameID, GameData.phaseType.Place);
         gameDataAccess.verifyClientPiece(username, gameID, piece);
         gameDataAccess.verifyRegionControl(username, gameID, regionID);
     }
     public int makePurchase(String username, String gameID, Piece pieceToBuy) throws DataAccessError, UserError {
         return gameDataAccess.makePurchase(username, gameID, pieceToBuy);
+    }
+    public GameData placePiece(String username, String gameID, Piece piece, int regionID) throws DataAccessError, UserError {
+        return gameDataAccess.placePiece(username, gameID, piece, regionID);
     }
 }

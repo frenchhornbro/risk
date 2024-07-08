@@ -124,6 +124,10 @@ abstract public class DataAccess {
         return new Gson().fromJson(gameData.getFirst(), GameData.class);
     }
 
+    protected void setGame(String gameID, GameData gameData) throws DataAccessError {
+        updateDB(true, "INSERT INTO GameData (gameID, gameData) VALUES (?, ?)", gameID, gameData);
+    }
+
     protected PlayerData getPlayer(String gameID, String username) throws DataAccessError {
         GameData gameData = getGame(gameID);
         HashMap<String, PlayerData> players = gameData.getPlayers();

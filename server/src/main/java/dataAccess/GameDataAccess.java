@@ -63,4 +63,21 @@ public class GameDataAccess extends DataAccess {
         super.setPlayer(gameID, playerData);
         return playerData.getBalance();
     }
+
+    public GameData placePiece(String username, String gameID, Piece piece, int regionID) throws DataAccessError, UserError {
+        GameData gameData = super.getGame(gameID);
+        HashMap<Integer, Region> board = gameData.getBoard().getBoard();
+        Region region = board.get(regionID);
+        HashMap<Piece, Integer> regionPieces = region.getPieces();
+        regionPieces.put(piece, regionPieces.get(piece) + 1);
+
+        PlayerData player = super.getPlayer(gameID, username);
+        HashMap<Piece, Integer> purchasedPieces = player.getPurchasedPieces();
+        purchasedPieces.put(piece, purchasedPieces.get(piece) - 1);
+        player.setPurchasedPieces(purchasedPieces);
+        gameData.updatePlayer(player);
+
+        super.setGame(gameID, gameData);
+        return gameData;
+    }
 }

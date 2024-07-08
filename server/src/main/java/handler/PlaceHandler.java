@@ -1,5 +1,6 @@
 package handler;
 
+import com.google.gson.Gson;
 import exceptions.DataAccessError;
 import exceptions.ServerError;
 import pieces.Piece;
@@ -21,9 +22,10 @@ public class PlaceHandler extends Handler {
             String gameID = reqBody.get("gameID");
             Piece piece = Handler.stringToPiece(reqBody.get("piece"));
             int regionID = Integer.parseInt(reqBody.get("region"));
-            service.authenticate(authToken, gameID);
+            String username = service.authenticate(authToken, gameID);
             service.placeReqs(authToken, gameID, piece, regionID);
-            //TODO: service.placePiece() and return updated board
+            response.status(200);
+            response.body(new Gson().toJson(service.placePiece(username, gameID, piece, regionID)));
         }
         catch (DataAccessError dataAccessError) {
             super.handleDataAccessError(response, dataAccessError);
