@@ -2,12 +2,12 @@ package game;
 
 import pieces.Piece;
 
-import java.util.ArrayList;
+import java.util.HashMap;
 
 public class PlayerData {
     private int balance;
     private final String username;
-    private ArrayList<Piece> purchasedPieces;
+    private HashMap<Piece, Integer> purchasedPieces;
     public PlayerData(String username) {
         this.username = username;
     }
@@ -23,10 +23,10 @@ public class PlayerData {
         this.balance = balance;
     }
 
-    public ArrayList<Piece> getPurchasedPieces() {
+    public HashMap<Piece, Integer> getPurchasedPieces() {
         return purchasedPieces;
     }
-    public void setPurchasedPieces(ArrayList<Piece> purchasedPieces) {
+    public void setPurchasedPieces(HashMap<Piece, Integer> purchasedPieces) {
         this.purchasedPieces = purchasedPieces;
     }
 

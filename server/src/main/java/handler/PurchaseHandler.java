@@ -1,16 +1,16 @@
 package handler;
 
 import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
 import exceptions.DataAccessError;
 import exceptions.ServerError;
+import pieces.Piece;
 import service.Service;
 import spark.Request;
 import spark.Response;
 
 import java.util.HashMap;
 
-public class PurchaseHandler {
+public class PurchaseHandler extends Handler {
     private final Service service;
 
     public PurchaseHandler() throws DataAccessError {
@@ -18,23 +18,21 @@ public class PurchaseHandler {
     }
 
     public Object purchase(Request request, Response response) throws ServerError {
-        Gson serial = new Gson();
         try {
-            String authToken = request.headers("authToken");
-            HashMap<String, String> reqBody = serial.fromJson(request.body(), new TypeToken<HashMap<String, String>>(){}.getType());
+            String authToken = super.getAuthToken(request);
+            HashMap<String, String> reqBody = super.getReqBody(request);
             String gameID = reqBody.get("gameID");
-            String pieceToBuy = reqBody.get("pieceToBuy");
+            Piece pieceToBuy = Handler.stringToPiece(reqBody.get("pieceToBuy"));
             String username = service.authenticate(authToken, gameID);
             service.purchaseReqs(username, gameID, pieceToBuy);
             response.status(200);
-            response.body(serial.toJson(service.makePurchase(username, gameID, pieceToBuy)));
+            response.body(new Gson().toJson(service.makePurchase(username, gameID, pieceToBuy)));
         }
         catch (DataAccessError dataAccessError) {
-            response.status(dataAccessError.getErrorCode());
-            response.body(serial.toJson(dataAccessError.getMessage()));
+            super.handleDataAccessError(response, dataAccessError);
         }
         catch (Exception exception) {
-            throw new ServerError(exception.getMessage(), 500);
+            super.throwServerError(exception);
         }
         return response;
     }

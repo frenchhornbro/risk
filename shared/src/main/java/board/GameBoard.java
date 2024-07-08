@@ -1,7 +1,5 @@
 package board;
 
-import pieces.Piece;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -11,7 +9,7 @@ public class GameBoard {
         GameBoard gameBoard = new GameBoard();
         gameBoard.printAdjacencies();
     }
-    public HashMap<Region, ArrayList<Piece>> board;
+    private HashMap<Integer, Region> board; //RegionID, Region
     public GameBoard() {
         board = new HashMap<>();
         setupWorldBoard();
@@ -22,10 +20,10 @@ public class GameBoard {
         ArrayList<String> regNames = new ArrayList<>(Arrays.asList(
                 "United States",    "Canada",   "Greenland",            "Iceland",          "Mexico",
                 "Cuba",             "Haiti",    "Dominican Republic",   "Jamaica",          "Puerto Rico",
-                "Guatemala",       "Belize",   "Honduras",             "El Salvador",      "Nicaragua",
-                "Costa Rica",      "Panama",   "Colombia",             "Venezuela",        "Ecuador",
-                "Peru",            "Guyana",   "Suriname",             "French Guiana",    "Brazil",
-                "Bolivia",         "Paraguay", "Uruguay",              "Chile",            "Argentina"
+                "Guatemala",        "Belize",   "Honduras",             "El Salvador",      "Nicaragua",
+                "Costa Rica",       "Panama",   "Colombia",             "Venezuela",        "Ecuador",
+                "Peru",             "Guyana",   "Suriname",             "French Guiana",    "Brazil",
+                "Bolivia",          "Paraguay", "Uruguay",              "Chile",            "Argentina"
         ));
         Integer[][] adjacencies = {
                 {1, 4},                 {0},            {},                     {},                 {0, 10, 11},
@@ -39,21 +37,32 @@ public class GameBoard {
         for (int i = 0; i < regNames.size(); i++) {
             ArrayList<Integer> adjacency = new ArrayList<>(Arrays.asList(adjacencies[i]));
             Region region = new Region(regNames.get(i), i, adjacency);
-            board.put(region, new ArrayList<>());
+            board.put(region.getRegID(), region);
         }
     }
 
     private void printAdjacencies() {
-        for (Region reg: board.keySet()) {
-            ArrayList<Integer> adjacencies = reg.getAdjacentRegIDs();
-            ArrayList<String> adjNames = new ArrayList<>();
-            for (Region thisReg: board.keySet()) {
-                for (Integer thisAdj : adjacencies) {
-                    if (thisAdj == thisReg.getRegID()) adjNames.add(thisReg.getName());
+        for (Region reg : board.values()) {
+            ArrayList<Integer> adjacencyIDs = reg.getAdjacentRegIDs();
+            ArrayList<String> adjacencyNames = new ArrayList<>();
+            for (Integer regionID : board.keySet()) {
+                for (Integer thisAdjacencyID : adjacencyIDs) {
+                    if (thisAdjacencyID.equals(regionID)) {
+                        Region thisAdjacencyRegion = board.get(thisAdjacencyID);
+                        adjacencyNames.add(thisAdjacencyRegion.getName());
+                    }
                 }
             }
-            System.out.println(reg.getName() + " ".repeat(Math.max(0, 18 - reg.getName().length())) + "\t->\t" + adjNames);
+            System.out.println(reg.getName() + " ".repeat(Math.max(0, 18 - reg.getName().length())) + "\t->\t" + adjacencyNames);
         }
+    }
+
+    public HashMap<Integer, Region> getBoard() {
+        return board;
+    }
+
+    public void setBoard(HashMap<Integer, Region> board) {
+        this.board = board;
     }
 
     @Override

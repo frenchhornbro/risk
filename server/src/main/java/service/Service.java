@@ -4,6 +4,8 @@ import dataAccess.GameDataAccess;
 import dataAccess.UserDataAccess;
 import exceptions.DataAccessError;
 import exceptions.UserError;
+import game.GameData;
+import pieces.Piece;
 
 public class Service {
     private final UserDataAccess userDataAccess;
@@ -24,11 +26,17 @@ public class Service {
         gameDataAccess.verifyClientTurn(gameID, username);
         return username;
     }
-    public void purchaseReqs(String username, String gameID, String pieceToBuy) throws DataAccessError {
-        gameDataAccess.verifyGamePhase(gameID, "purchase");
+    public void purchaseReqs(String username, String gameID, Piece pieceToBuy) throws DataAccessError {
+        gameDataAccess.verifyGamePhase(gameID, GameData.phaseType.Purchase);
         gameDataAccess.verifyClientBalance(username, gameID, pieceToBuy);
     }
-    public int makePurchase(String username, String gameID, String pieceToBuy) throws DataAccessError, UserError {
+    public void placeReqs(String authToken, String gameID, Piece piece, int regionID) throws DataAccessError {
+        String username = userDataAccess.getUsername(authToken);
+        gameDataAccess.verifyGamePhase(gameID, GameData.phaseType.Place);
+        gameDataAccess.verifyClientPiece(username, gameID, piece);
+        gameDataAccess.verifyRegionControl(username, gameID, regionID);
+    }
+    public int makePurchase(String username, String gameID, Piece pieceToBuy) throws DataAccessError, UserError {
         return gameDataAccess.makePurchase(username, gameID, pieceToBuy);
     }
 }

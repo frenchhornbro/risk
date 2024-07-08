@@ -1,5 +1,6 @@
 package game;
 
+import board.GameBoard;
 import exceptions.UserError;
 
 import java.util.HashMap;
@@ -14,6 +15,7 @@ public class GameData {
     }
     private String playerTurn;
     private phaseType phase;
+    private GameBoard board;
     private final HashMap<String, PlayerData> players;
     public GameData() {
         players = new HashMap<>();
@@ -43,6 +45,13 @@ public class GameData {
         String username = playerData.getUsername();
         if (players.get(username) == null) throw new UserError("Player doesn't exist");
         players.put(username, playerData);
+    }
+
+    public GameBoard getBoard() {
+        return board;
+    }
+    public void setBoard(GameBoard board) {
+        this.board = board;
     }
 
     @Override

@@ -61,8 +61,6 @@ db-->Service:Yes
 Service-->Server:Authenticated
 
 Server->Service: Place requirements fulfilled?
-Service->db:Does gamePhase == purchase?
-db-->Service:Yes
 Service->db:Does gamePhase == place?
 db-->Service:Yes
 Service->db:Does client have this piece?
