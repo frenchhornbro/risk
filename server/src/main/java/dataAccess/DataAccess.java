@@ -139,7 +139,7 @@ abstract public class DataAccess {
 
     protected void setPlayer(String gameID, PlayerData playerData) throws DataAccessError, UserError {
         GameData gameData = getGame(gameID);
-        gameData.updatePlayer(playerData);
+        gameData.updatePlayer(playerData, false);
         updateDB(true, "INSERT INTO GameData (gameID, gameData) VALUES (?, ?)", gameID, gameData);
     }
 }

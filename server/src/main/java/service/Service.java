@@ -43,6 +43,15 @@ public class Service {
         return userDataAccess.storeCredentials(email, username, password);
     }
 
+    public void authenticate(String authToken) throws DataAccessError {
+        userDataAccess.validateAuthToken(authToken);
+    }
+
+    public int createGame(String authToken) throws DataAccessError, UserError {
+        String username = userDataAccess.getUsername(authToken);
+        return gameDataAccess.createGame(username);
+    }
+
     /**
      * Validate authToken, validate gameID, check if client is in game, check if it is client's turn
      * @return username

@@ -1,6 +1,7 @@
 package dataAccess;
 
 import board.Region;
+import com.google.gson.Gson;
 import exceptions.DataAccessError;
 import exceptions.UserError;
 import game.GameData;
@@ -12,6 +13,15 @@ import java.util.HashMap;
 public class GameDataAccess extends DataAccess {
     public GameDataAccess() throws DataAccessError {
 
+    }
+
+    public int createGame(String username) throws DataAccessError, UserError {
+        GameData newGame = new GameData();
+        newGame.updatePlayer(new PlayerData(username), true);
+        String newGameText = new Gson().toJson(newGame);
+        super.updateDB(true, "INSERT INTO gameData (gameData) VALUES (?)", newGameText);
+        String gameID = super.queryDB("SELECT gameID FROM gameData WHERE gameData=?", newGameText).getFirst();
+        return Integer.parseInt(gameID);
     }
     public void validateGameID(String gameID) throws DataAccessError {
         super.getGame(gameID);
@@ -75,7 +85,7 @@ public class GameDataAccess extends DataAccess {
         HashMap<Piece, Integer> purchasedPieces = player.getPurchasedPieces();
         purchasedPieces.put(piece, purchasedPieces.get(piece) - 1);
         player.setPurchasedPieces(purchasedPieces);
-        gameData.updatePlayer(player);
+        gameData.updatePlayer(player, false);
 
         super.setGame(gameID, gameData);
         return gameData;

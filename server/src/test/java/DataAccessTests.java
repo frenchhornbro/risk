@@ -1,7 +1,6 @@
 import dataAccess.GameDataAccess;
 import dataAccess.UserDataAccess;
 import exceptions.DataAccessError;
-import exceptions.UserError;
 import game.GameData;
 import game.PlayerData;
 import org.junit.jupiter.api.*;
@@ -49,15 +48,10 @@ public class DataAccessTests {
                     put(new Tank(), 2);
                 }});
         player1.setPurchasedPieces(new HashMap<>(){});
-        try {
-            gameData.updatePlayer(player1);
-            gameData.updatePlayer(new PlayerData("username2"));
-            gameData.updatePlayer(new PlayerData("username3"));
-            gameData.updatePlayer(new PlayerData("username4"));
-        }
-        catch (UserError userError) {
-            System.out.println(userError);
-        }
+        Assertions.assertDoesNotThrow(() -> gameData.updatePlayer(player1, true));
+        Assertions.assertDoesNotThrow(() -> gameData.updatePlayer(new PlayerData("username2"), true));
+        Assertions.assertDoesNotThrow(() -> gameData.updatePlayer(new PlayerData("username3"), true));
+        Assertions.assertDoesNotThrow(() -> gameData.updatePlayer(new PlayerData("username4"), true));
         System.out.println(gameData);
     }
 

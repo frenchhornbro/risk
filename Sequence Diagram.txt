@@ -32,6 +32,22 @@ Service-->Server:authToken
 Server-->Client:authToken
 end
 
+group #lightblue Create Game #white
+Client->Server:authToken
+
+Server->Service:Authenticate authToken
+Service->DataAccess:Is authToken valid?
+DataAccess-->Service:Yes
+Service-->Server:Authenticated
+
+Server->Service:Create new game
+Service->DataAccess:Create new game
+DataAccess-->Service:gameID
+Service-->Server:gameID
+
+Server-->Client:gameID
+end
+
 
 
 group #lightgreen Purchase #white

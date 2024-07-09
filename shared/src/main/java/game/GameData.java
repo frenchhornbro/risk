@@ -41,9 +41,9 @@ public class GameData {
         return players;
     }
 
-    public void updatePlayer(PlayerData playerData) throws UserError {
+    public void updatePlayer(PlayerData playerData, boolean isNew) throws UserError {
         String username = playerData.getUsername();
-        if (players.get(username) == null) throw new UserError("Player doesn't exist");
+        if ((players.get(username) == null) != (isNew)) throw new UserError("Player doesn't exist");
         players.put(username, playerData);
     }
 
