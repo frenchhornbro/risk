@@ -22,7 +22,7 @@ public class PlaceHandler extends Handler {
             String gameID = reqBody.get("gameID");
             Piece piece = Handler.stringToPiece(reqBody.get("piece"));
             int regionID = Integer.parseInt(reqBody.get("region"));
-            String username = service.authenticate(authToken, gameID);
+            String username = service.authenticate(authToken, gameID, true);
             service.placeReqs(authToken, gameID, piece, regionID);
             response.status(200);
             response.body(new Gson().toJson(service.placePiece(username, gameID, piece, regionID)));

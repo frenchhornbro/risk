@@ -15,13 +15,16 @@ public class GameDataAccess extends DataAccess {
 
     }
 
-    public int createGame(String username) throws DataAccessError, UserError {
+    public String createGame(String username) throws DataAccessError, UserError {
         GameData newGame = new GameData();
+        //TODO: ^^^ Need to give each player a starting balance and some regions to control
         newGame.updatePlayer(new PlayerData(username), true);
         String newGameText = new Gson().toJson(newGame);
         super.updateDB(true, "INSERT INTO gameData (gameData) VALUES (?)", newGameText);
-        String gameID = super.queryDB("SELECT gameID FROM gameData WHERE gameData=?", newGameText).getFirst();
-        return Integer.parseInt(gameID);
+        return super.queryDB("SELECT gameID FROM gameData WHERE gameData=?", newGameText).getFirst();
+    }
+    public GameData joinPlayer(String username, String gameID) throws DataAccessError, UserError {
+        return super.setPlayer(gameID, new PlayerData(username), true);
     }
     public void validateGameID(String gameID) throws DataAccessError {
         super.getGame(gameID);
@@ -60,7 +63,7 @@ public class GameDataAccess extends DataAccess {
     /**
      * Return updated balance
     */
-    public int makePurchase(String username, String gameID, Piece pieceToBuy) throws DataAccessError, UserError {
+    public GameData makePurchase(String username, String gameID, Piece pieceToBuy) throws DataAccessError, UserError {
         PlayerData playerData = super.getPlayer(gameID, username);
 
         HashMap<Piece, Integer> purchasedPieces = playerData.getPurchasedPieces();
@@ -70,8 +73,7 @@ public class GameDataAccess extends DataAccess {
         playerData.setPurchasedPieces(purchasedPieces);
         playerData.setBalance(playerData.getBalance() - pieceToBuy.getCost());
 
-        super.setPlayer(gameID, playerData);
-        return playerData.getBalance();
+        return super.setPlayer(gameID, playerData, false);
     }
 
     public GameData placePiece(String username, String gameID, Piece piece, int regionID) throws DataAccessError, UserError {
@@ -87,7 +89,7 @@ public class GameDataAccess extends DataAccess {
         player.setPurchasedPieces(purchasedPieces);
         gameData.updatePlayer(player, false);
 
-        super.setGame(gameID, gameData);
+        super.updateGame(gameID, gameData);
         return gameData;
     }
 }

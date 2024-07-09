@@ -1,5 +1,6 @@
 title Sequence Diagram
 
+entryspacing 0.9
 participantgroup **Frontend**
 actor Client
 end
@@ -50,6 +51,25 @@ end
 
 
 
+group #purple Join Game #white
+Client->Server:authToken, gameID
+
+Server->Service:Authenticate authToken, gameID
+Service->DataAccess:Is authToken valid?
+DataAccess-->Service:Yes
+Service->DataAccess:Is gameID valid?
+DataAccess-->Service:Yes
+Service-->Server:Authenticated
+
+Server->Service:Add player to game
+Service->DataAccess:Add player to game
+DataAccess-->Service:GameData
+Service-->Server:GameData
+Server-->Client:GameData
+end
+
+
+
 group #lightgreen Purchase #white
 Client->Server: authToken, gameID, pieceToBuy
 
@@ -75,9 +95,9 @@ note over Server:If each response is "Yes"
 Server->Service:Make purchase
 Service->DataAccess:Put piece in client's purchasedPieces
 Service->DataAccess:Deduct cost from client's balance
-DataAccess-->Service:Updated balance
-Service-->Server:Updated balance
-Server-->Client:200, updated balance
+DataAccess-->Service:GameData
+Service-->Server:GameData
+Server-->Client:GameData
 end
 
 
@@ -109,9 +129,9 @@ note over Server:If each response is "Yes"
 Server->Service:Place piece
 Service->DataAccess:Add piece to region
 Service->DataAccess:Remove piece from client's purchasedPieces
-DataAccess-->Service:Updated gameData
-Service-->Server:Updated gameData
-Server-->Client:200, updated gameData
+DataAccess-->Service:GameData
+Service-->Server:GameData
+Server-->Client:GameData
 end
 
 
@@ -152,9 +172,9 @@ note over Service: If enemy wins:
 Service->DataAccess:Remove dead enemy pieces from toRegion
 Service->DataAccess:Remove all client pieces from toRegion
 
-DataAccess-->Service:Updated gameData
-Service-->Server:Updated gameData
-Server-->Client:200, updated gameData
+DataAccess-->Service:GameData
+Service-->Server:GameData
+Server-->Client:GameData
 end
 
 
@@ -187,9 +207,9 @@ Service-->Server:Yes
 Server->Service:Reinforce pieces
 Service->DataAccess:Add pieces to toRegion
 Service->DataAccess:Remove pieces from fromRegion
-DataAccess-->Service:Updated gameData
-Service-->Server:Updated gameData
-Server-->Client:200, updated gameData
+DataAccess-->Service:GameData
+Service-->Server:GameData
+Server-->Client:GameData
 end
 
 
@@ -216,9 +236,9 @@ Service-->Server:Yes
 note over Server:If each response is "Yes"
 Server->Service:Update gamePhase to nextPhase
 Service->DataAccess:Update gamePhase to nextPhase
-DataAccess-->Service:Update gamePhase
-Service-->Server:Updated gamePhase
-Server-->Client:200, updated gamePhase
+DataAccess-->Service:GameData
+Service-->Server:GameData
+Server-->Client:GameData
 end
 
 
@@ -245,6 +265,7 @@ Service-->Server:Yes
 note over Server:If each response is "Yes"
 Server->Service:Next turn
 Service->DataAccess:Update turn to next in turnOrder
-Service-->Server:Done
-Server-->Client:200
+DataAccess-->Service:GameData
+Service-->Server:GameData
+Server-->Client:GameData
 end

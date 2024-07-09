@@ -11,6 +11,7 @@ public class Server {
     }
     private CreateUserHandler createUserHandler;
     private CreateGameHandler createGameHandler;
+    private JoinGameHandler joinGameHandler;
     private PurchaseHandler purchaseHandler;
     private PlaceHandler placeHandler;
     private AttackHandler attackHandler;
@@ -21,6 +22,7 @@ public class Server {
         try {
             createUserHandler = new CreateUserHandler();
             createGameHandler = new CreateGameHandler();
+            joinGameHandler = new JoinGameHandler();
             purchaseHandler = new PurchaseHandler();
             placeHandler = new PlaceHandler();
             attackHandler = new AttackHandler();
@@ -45,6 +47,7 @@ public class Server {
         //TODO: Also include routes to login, delete user, and join a game
         Spark.post("/user", this.createUserHandler::createUser);
         Spark.post("/game", this.createGameHandler::createGame);
+        Spark.patch("/join-game", this.joinGameHandler::joinGame);
         Spark.put("/purchase", this.purchaseHandler::purchase);
         Spark.put("/place", this.placeHandler::place);
         Spark.put("/attack", this.attackHandler::attack);

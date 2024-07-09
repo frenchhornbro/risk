@@ -7,17 +7,21 @@ import service.Service;
 import spark.Request;
 import spark.Response;
 
-public class CreateGameHandler extends Handler {
+import java.util.HashMap;
+
+public class JoinGameHandler extends Handler {
     private final Service service;
-    public CreateGameHandler() throws DataAccessError {
+    public JoinGameHandler() throws DataAccessError {
         service = new Service();
     }
-    public Object createGame(Request request, Response response) throws ServerError {
+    public Object joinGame(Request request, Response response) throws ServerError {
         try {
             String authToken = super.getAuthToken(request);
-            service.authenticate(authToken);
-            response.body(new Gson().toJson(service.createGame(authToken)));
+            HashMap<String, String> reqBody = super.getReqBody(request);
+            String gameID = reqBody.get("gameID");
+            service.authenticate(authToken, gameID, false);
             response.status(200);
+            response.body(new Gson().toJson(service.joinPlayer(authToken, gameID)));
         }
         catch (DataAccessError dataAccessError) {
             super.handleDataAccessError(response, dataAccessError);

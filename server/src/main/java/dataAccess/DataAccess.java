@@ -125,8 +125,8 @@ abstract public class DataAccess {
         return new Gson().fromJson(gameData.getFirst(), GameData.class);
     }
 
-    protected void setGame(String gameID, GameData gameData) throws DataAccessError {
-        updateDB(true, "INSERT INTO GameData (gameID, gameData) VALUES (?, ?)", gameID, gameData);
+    protected void updateGame(String gameID, GameData gameData) throws DataAccessError {
+        updateDB(true, "UPDATE GameData SET gameData=? WHERE gameID=?", gameData, gameID);
     }
 
     protected PlayerData getPlayer(String gameID, String username) throws DataAccessError {
@@ -137,9 +137,10 @@ abstract public class DataAccess {
         return player;
     }
 
-    protected void setPlayer(String gameID, PlayerData playerData) throws DataAccessError, UserError {
+    protected GameData setPlayer(String gameID, PlayerData playerData, boolean isNew) throws DataAccessError, UserError {
         GameData gameData = getGame(gameID);
-        gameData.updatePlayer(playerData, false);
-        updateDB(true, "INSERT INTO GameData (gameID, gameData) VALUES (?, ?)", gameID, gameData);
+        gameData.updatePlayer(playerData, isNew);
+        updateDB(true, "UPDATE GameData SET gameData=? WHERE gameID=?", gameData, gameID);
+        return gameData;
     }
 }

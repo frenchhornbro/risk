@@ -47,21 +47,28 @@ public class Service {
         userDataAccess.validateAuthToken(authToken);
     }
 
-    public int createGame(String authToken) throws DataAccessError, UserError {
+    public String createGame(String authToken) throws DataAccessError, UserError {
         String username = userDataAccess.getUsername(authToken);
         return gameDataAccess.createGame(username);
+    }
+
+    public GameData joinPlayer(String authToken, String gameID) throws DataAccessError, UserError {
+        String username = userDataAccess.getUsername(authToken);
+        return gameDataAccess.joinPlayer(username, gameID);
     }
 
     /**
      * Validate authToken, validate gameID, check if client is in game, check if it is client's turn
      * @return username
      */
-    public String authenticate(String authToken, String gameID) throws DataAccessError {
+    public String authenticate(String authToken, String gameID, boolean takingTurn) throws DataAccessError {
         userDataAccess.validateAuthToken(authToken);
         String username = userDataAccess.getUsername(authToken);
         gameDataAccess.validateGameID(gameID);
-        gameDataAccess.userInGame(gameID, username);
-        gameDataAccess.verifyClientTurn(gameID, username);
+        if (takingTurn) {
+            gameDataAccess.userInGame(gameID, username);
+            gameDataAccess.verifyClientTurn(gameID, username);
+        }
         return username;
     }
     public void purchaseReqs(String username, String gameID, Piece pieceToBuy) throws DataAccessError {
@@ -73,7 +80,7 @@ public class Service {
         gameDataAccess.verifyClientPiece(username, gameID, piece);
         gameDataAccess.verifyRegionControl(username, gameID, regionID);
     }
-    public int makePurchase(String username, String gameID, Piece pieceToBuy) throws DataAccessError, UserError {
+    public GameData makePurchase(String username, String gameID, Piece pieceToBuy) throws DataAccessError, UserError {
         return gameDataAccess.makePurchase(username, gameID, pieceToBuy);
     }
     public GameData placePiece(String username, String gameID, Piece piece, int regionID) throws DataAccessError, UserError {

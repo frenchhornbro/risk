@@ -23,7 +23,7 @@ public class PurchaseHandler extends Handler {
             HashMap<String, String> reqBody = super.getReqBody(request);
             String gameID = reqBody.get("gameID");
             Piece pieceToBuy = Handler.stringToPiece(reqBody.get("pieceToBuy"));
-            String username = service.authenticate(authToken, gameID);
+            String username = service.authenticate(authToken, gameID, true);
             service.purchaseReqs(username, gameID, pieceToBuy);
             response.status(200);
             response.body(new Gson().toJson(service.makePurchase(username, gameID, pieceToBuy)));
