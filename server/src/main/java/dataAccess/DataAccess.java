@@ -49,6 +49,7 @@ abstract public class DataAccess {
                 CREATE TABLE IF NOT EXISTS userData(
                     username VARCHAR(256) NOT NULL PRIMARY KEY,
                     password VARCHAR(256) NOT NULL,
+                    email VARCHAR(254) NOT NULL,
                     authToken VARCHAR(36) NOT NULL
                 );
                 """,

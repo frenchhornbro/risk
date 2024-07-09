@@ -22,7 +22,7 @@ public class CreateUserHandler extends Handler {
             String confirm = reqBody.get("confirm");
             service.validateCredentials(email, username, password, confirm);
             response.status(200);
-            response.body(); //TODO: Store credentials
+            response.body(service.storeCredentials(email, username, password));
         }
         catch (DataAccessError dataAccessError) {
             super.handleDataAccessError(response, dataAccessError);

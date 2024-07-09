@@ -5,6 +5,10 @@ import handler.*;
 import spark.*;
 
 public class Server {
+    public static void main(String[] args) {
+        Server server = new Server();
+        server.run(8080);
+    }
     private CreateUserHandler createUserHandler;
     private PurchaseHandler purchaseHandler;
     private PlaceHandler placeHandler;

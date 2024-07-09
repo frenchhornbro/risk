@@ -1,3 +1,4 @@
+import exceptions.CredentialError;
 import exceptions.DataAccessError;
 import org.junit.jupiter.api.*;
 import service.Service;
@@ -25,6 +26,25 @@ public class CreateUserTests {
             String username = "user" + i;
             String password = "th1s1sAPassword!";
             Assertions.assertDoesNotThrow(() -> service.validateCredentials(email, username, password, password));
+        }
+    }
+
+    @Test
+    public void checkPasswords() {
+        ArrayList<String> badPasswords = new ArrayList<>(Arrays.asList(
+                "pizza",
+                "PIZZA",
+                "1234568790",
+                "!@#$%^&*()",
+                "QWERTYuiop",
+                "12345^&*()",
+                "Passw0rd",
+                "a"
+        ));
+        for (String badPassword : badPasswords) {
+            String email = "example@example.com";
+            String username = "testUsername123";
+            Assertions.assertThrows(CredentialError.class, () -> service.validateCredentials(email, username, badPassword, badPassword));
         }
     }
 }
