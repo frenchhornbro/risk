@@ -8,6 +8,10 @@ public class UserDataAccess extends DataAccess {
     public UserDataAccess() throws DataAccessError {
 
     }
+    public void usernameNotTaken(String username) throws DataAccessError {
+        ArrayList<String> dbResponse = super.queryDB("SELECT username FROM userData WHERE username=?", username);
+        if (!dbResponse.isEmpty()) throw new DataAccessError("Username is taken", 400);
+    }
     public void validateAuthToken(String authToken) throws DataAccessError {
         ArrayList<String> dbResponse = super.queryDB("SELECT authToken FROM userData WHERE authToken=?", authToken);
         if (dbResponse.isEmpty()) throw new DataAccessError("Unauthorized", 401);

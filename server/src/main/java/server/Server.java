@@ -5,6 +5,7 @@ import handler.*;
 import spark.*;
 
 public class Server {
+    private CreateUserHandler createUserHandler;
     private PurchaseHandler purchaseHandler;
     private PlaceHandler placeHandler;
     private AttackHandler attackHandler;
@@ -13,6 +14,7 @@ public class Server {
     private EndTurnHandler endTurnHandler;
     public Server() {
         try {
+            createUserHandler = new CreateUserHandler();
             purchaseHandler = new PurchaseHandler();
             placeHandler = new PlaceHandler();
             attackHandler = new AttackHandler();
@@ -34,7 +36,8 @@ public class Server {
     }
 
     private void createRoutes() {
-        //TODO: Also include routes to login, create a new user, list games, and join a game
+        //TODO: Also include routes to login, delete user, create a game, and join a game
+        Spark.post("/user", this.createUserHandler::createUser);
         Spark.put("/purchase", this.purchaseHandler::purchase);
         Spark.put("/place", this.placeHandler::place);
         Spark.put("/attack", this.attackHandler::attack);

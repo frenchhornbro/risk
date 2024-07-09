@@ -7,10 +7,30 @@ end
 participantgroup **Backend**
 participant Server
 participant Service
-database db
+database DataAccess
 end
 
 participantspacing 15
+
+
+
+group #pink Create User #white
+Client->Server:email, username, password
+
+Server->Service:Credentials valid?
+Service->Service:Email follows regex?
+Service->Service:Password follows regex?
+Service->Service:Password and confirmation match?
+Service->DataAccess:Username not taken?
+DataAccess-->Service:Yes
+Service-->Server:Yes
+
+Server->Service:Store credentials
+Service->DataAccess:Store credentials
+DataAccess-->Service:authToken
+Service-->Server:authToken
+Server-->Client:authToken
+end
 
 
 
@@ -18,28 +38,28 @@ group #lightgreen Purchase #white
 Client->Server: authToken, gameID, pieceToBuy
 
 Server->Service: Authenticate authToken, gameID
-Service->db:Is authToken valid?
-db-->Service:Yes
-Service->db:Is gameID valid?
-db-->Service:Yes
-Service->db:Is client in game?
-db-->Service:Yes
-Service->db:Is it client's turn?
-db-->Service:Yes
+Service->DataAccess:Is authToken valid?
+DataAccess-->Service:Yes
+Service->DataAccess:Is gameID valid?
+DataAccess-->Service:Yes
+Service->DataAccess:Is client in game?
+DataAccess-->Service:Yes
+Service->DataAccess:Is it client's turn?
+DataAccess-->Service:Yes
 Service-->Server:Authenticated
 
 Server->Service: Purchase requirements fulfilled?
-Service->db:Does gamePhase == purchase?
-db-->Service:Yes
-Service->db:Does client have enough money?
-db-->Service:Yes
+Service->DataAccess:Does gamePhase == purchase?
+DataAccess-->Service:Yes
+Service->DataAccess:Does client have enough money?
+DataAccess-->Service:Yes
 Service-->Server:Yes
 
 note over Server:If each response is "Yes"
 Server->Service:Make purchase
-Service->db:Put piece in client's purchasedPieces
-Service->db:Deduct cost from client's balance
-db-->Service:Updated balance
+Service->DataAccess:Put piece in client's purchasedPieces
+Service->DataAccess:Deduct cost from client's balance
+DataAccess-->Service:Updated balance
 Service-->Server:Updated balance
 Server-->Client:200, updated balance
 end
@@ -50,30 +70,30 @@ group #yellow Place
 Client->Server:authToken, gameID, piece, regionID
 
 Server->Service: Authenticate authToken, gameID
-Service->db:Is authToken valid?
-db-->Service:Yes
-Service->db:Is gameID valid?
-db-->Service:Yes
-Service->db:Is client in game?
-db-->Service:Yes
-Service->db:Is it client's turn?
-db-->Service:Yes
+Service->DataAccess:Is authToken valid?
+DataAccess-->Service:Yes
+Service->DataAccess:Is gameID valid?
+DataAccess-->Service:Yes
+Service->DataAccess:Is client in game?
+DataAccess-->Service:Yes
+Service->DataAccess:Is it client's turn?
+DataAccess-->Service:Yes
 Service-->Server:Authenticated
 
 Server->Service: Place requirements fulfilled?
-Service->db:Does gamePhase == place?
-db-->Service:Yes
-Service->db:Does client have this piece?
-db-->Service:Yes
-Service->db:Is this region controlled by client?
-db-->Service:Yes
+Service->DataAccess:Does gamePhase == place?
+DataAccess-->Service:Yes
+Service->DataAccess:Does client have this piece?
+DataAccess-->Service:Yes
+Service->DataAccess:Is this region controlled by client?
+DataAccess-->Service:Yes
 Service-->Server:Yes
 
 note over Server:If each response is "Yes"
 Server->Service:Place piece
-Service->db:Add piece to region
-Service->db:Remove piece from client's purchasedPieces
-db-->Service:Updated gameData
+Service->DataAccess:Add piece to region
+Service->DataAccess:Remove piece from client's purchasedPieces
+DataAccess-->Service:Updated gameData
 Service-->Server:Updated gameData
 Server-->Client:200, updated gameData
 end
@@ -84,39 +104,39 @@ group #red Attack #white
 Client->Server:authToken, gameID, fromRegion, toRegion
 
 Server->Service: Authenticate authToken, gameID
-Service->db:Is authToken valid?
-db-->Service:Yes
-Service->db:Is gameID valid?
-db-->Service:Yes
-Service->db:Is client in game?
-db-->Service:Yes
-Service->db:Is it client's turn?
-db-->Service:Yes
+Service->DataAccess:Is authToken valid?
+DataAccess-->Service:Yes
+Service->DataAccess:Is gameID valid?
+DataAccess-->Service:Yes
+Service->DataAccess:Is client in game?
+DataAccess-->Service:Yes
+Service->DataAccess:Is it client's turn?
+DataAccess-->Service:Yes
 Service-->Server:Authenticated
 
 Server->Service:Attack requirements fulfilled?
-Service->db:Is fromRegion controlled by client?
-db-->Service:Yes
-Service->db:Is toRegion controlled by client?
-db-->Service:No
+Service->DataAccess:Is fromRegion controlled by client?
+DataAccess-->Service:Yes
+Service->DataAccess:Is toRegion controlled by client?
+DataAccess-->Service:No
 Service-->Server:Yes
 
 Server->Service:Move pieces into toRegion
-Service->db:Move all pieces from fromRegion to toRegion
+Service->DataAccess:Move all pieces from fromRegion to toRegion
 
 Server->Service: Calculate attack
 note over Service: Calculate attack
 
 note over Service: If client wins:
-Service->db:Assign region's control to client
-Service->db:Remove all enemy pieces from toRegion
-Service->db:Remove dead client pieces from toRegion
+Service->DataAccess:Assign region's control to client
+Service->DataAccess:Remove all enemy pieces from toRegion
+Service->DataAccess:Remove dead client pieces from toRegion
 
 note over Service: If enemy wins:
-Service->db:Remove dead enemy pieces from toRegion
-Service->db:Remove all client pieces from toRegion
+Service->DataAccess:Remove dead enemy pieces from toRegion
+Service->DataAccess:Remove all client pieces from toRegion
 
-db-->Service:Updated gameData
+DataAccess-->Service:Updated gameData
 Service-->Server:Updated gameData
 Server-->Client:200, updated gameData
 end
@@ -127,31 +147,31 @@ group #blue Reinforce #white
 Client->Server:authToken, gameID, pieces, fromRegion, toRegion
 
 Server->Service: Authenticate authToken, gameID
-Service->db:Is authToken valid?
-db-->Service:Yes
-Service->db:Is gameID valid?
-db-->Service:Yes
-Service->db:Is client in game?
-db-->Service:Yes
-Service->db:Is it client's turn?
-db-->Service:Yes
+Service->DataAccess:Is authToken valid?
+DataAccess-->Service:Yes
+Service->DataAccess:Is gameID valid?
+DataAccess-->Service:Yes
+Service->DataAccess:Is client in game?
+DataAccess-->Service:Yes
+Service->DataAccess:Is it client's turn?
+DataAccess-->Service:Yes
 Service-->Server:Authenticated
 
 Server->Service:Reinforce requirements fulfilled?
-Service->db:Pieces are in fromRegion?
-db-->Service:Yes
-Service->db:Client controls fromRegion?
-db-->Service:Yes
-Service->db:Client controls toRegion?
-db-->Service:Yes
-Service->db:fromRegion and toRegion are adjacent\nor connected by regions under client's control?
-db-->Service:Yes
+Service->DataAccess:Pieces are in fromRegion?
+DataAccess-->Service:Yes
+Service->DataAccess:Client controls fromRegion?
+DataAccess-->Service:Yes
+Service->DataAccess:Client controls toRegion?
+DataAccess-->Service:Yes
+Service->DataAccess:fromRegion and toRegion are adjacent\nor connected by regions under client's control?
+DataAccess-->Service:Yes
 Service-->Server:Yes
 
 Server->Service:Reinforce pieces
-Service->db:Add pieces to toRegion
-Service->db:Remove pieces from fromRegion
-db-->Service:Updated gameData
+Service->DataAccess:Add pieces to toRegion
+Service->DataAccess:Remove pieces from fromRegion
+DataAccess-->Service:Updated gameData
 Service-->Server:Updated gameData
 Server-->Client:200, updated gameData
 end
@@ -162,25 +182,25 @@ group #gray Update Phase #white
 Client->Server: authToken, gameID, currPhase
 
 Server->Service: Authenticate authToken, gameID
-Service->db:Is authToken valid?
-db-->Service:Yes
-Service->db:Is gameID valid?
-db-->Service:Yes
-Service->db:Is client in game?
-db-->Service:Yes
-Service->db:Is it client's turn?
-db-->Service:Yes
+Service->DataAccess:Is authToken valid?
+DataAccess-->Service:Yes
+Service->DataAccess:Is gameID valid?
+DataAccess-->Service:Yes
+Service->DataAccess:Is client in game?
+DataAccess-->Service:Yes
+Service->DataAccess:Is it client's turn?
+DataAccess-->Service:Yes
 Service-->Server:Authenticated
 
 Server->Service:gamePhase == purchase?
-Service->db:Does gamePhase == purchase?
-db-->Service:Yes
+Service->DataAccess:Does gamePhase == purchase?
+DataAccess-->Service:Yes
 Service-->Server:Yes
 
 note over Server:If each response is "Yes"
 Server->Service:Update gamePhase to nextPhase
-Service->db:Update gamePhase to nextPhase
-db-->Service:Update gamePhase
+Service->DataAccess:Update gamePhase to nextPhase
+DataAccess-->Service:Update gamePhase
 Service-->Server:Updated gamePhase
 Server-->Client:200, updated gamePhase
 end
@@ -191,24 +211,24 @@ group #black End Turn #white
 Client->Server: authToken, gameID
 
 Server->Service: Authenticate authToken, gameID
-Service->db:Is authToken valid?
-db-->Service:Yes
-Service->db:Is gameID valid?
-db-->Service:Yes
-Service->db:Is client in game?
-db-->Service:Yes
-Service->db:Is it client's turn?
-db-->Service:Yes
+Service->DataAccess:Is authToken valid?
+DataAccess-->Service:Yes
+Service->DataAccess:Is gameID valid?
+DataAccess-->Service:Yes
+Service->DataAccess:Is client in game?
+DataAccess-->Service:Yes
+Service->DataAccess:Is it client's turn?
+DataAccess-->Service:Yes
 Service-->Server:Authenticated
 
 Server->Service:gamePhase == reinforce?
-Service->db:Does gamePhase == reinforce?
-db-->Service:Yes
+Service->DataAccess:Does gamePhase == reinforce?
+DataAccess-->Service:Yes
 Service-->Server:Yes
 
 note over Server:If each response is "Yes"
 Server->Service:Next turn
-Service->db:Update turn to next in turnOrder
+Service->DataAccess:Update turn to next in turnOrder
 Service-->Server:Done
 Server-->Client:200
 end
