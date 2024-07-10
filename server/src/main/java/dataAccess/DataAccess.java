@@ -11,7 +11,6 @@ import java.io.InputStream;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.Properties;
 
 abstract public class DataAccess {
@@ -129,16 +128,7 @@ abstract public class DataAccess {
         updateDB(true, "UPDATE GameData SET gameData=? WHERE gameID=?", gameData, gameID);
     }
 
-    protected PlayerData getPlayer(String gameID, String username) throws DataAccessError {
-        GameData gameData = getGame(gameID);
-        HashMap<String, PlayerData> players = gameData.getPlayers();
-        PlayerData player = players.get(username);
-        if (player == null) throw new DataAccessError("User not in game", 400);
-        return player;
-    }
-
-    protected GameData setPlayer(String gameID, PlayerData playerData, boolean isNew) throws DataAccessError, UserError {
-        GameData gameData = getGame(gameID);
+    protected GameData setPlayer(GameData gameData, String gameID, PlayerData playerData, boolean isNew) throws DataAccessError, UserError {
         gameData.updatePlayer(playerData, isNew);
         updateDB(true, "UPDATE GameData SET gameData=? WHERE gameID=?", gameData, gameID);
         return gameData;

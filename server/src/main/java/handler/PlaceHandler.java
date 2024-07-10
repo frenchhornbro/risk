@@ -3,6 +3,7 @@ package handler;
 import com.google.gson.Gson;
 import exceptions.DataAccessError;
 import exceptions.ServerError;
+import game.GameData;
 import pieces.Piece;
 import service.Service;
 import spark.Request;
@@ -22,10 +23,12 @@ public class PlaceHandler extends Handler {
             String gameID = reqBody.get("gameID");
             Piece piece = Handler.stringToPiece(reqBody.get("piece"));
             int regionID = Integer.parseInt(reqBody.get("region"));
-            String username = service.authenticate(authToken, gameID, true);
-            service.placeReqs(authToken, gameID, piece, regionID);
+            Object[] info = service.authenticateGame(authToken, gameID, true);
+            String username = (String) info[0];
+            GameData gameData = (GameData) info[1];
+            service.placeReqs(username, gameData, piece, regionID);
+            response.body(new Gson().toJson(service.placePiece(username, gameData, gameID, piece, regionID)));
             response.status(200);
-            response.body(new Gson().toJson(service.placePiece(username, gameID, piece, regionID)));
         }
         catch (DataAccessError dataAccessError) {
             super.handleDataAccessError(response, dataAccessError);

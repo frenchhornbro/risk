@@ -37,10 +37,9 @@ public class GameData {
         this.phase = phase;
     }
 
-    public HashMap<String, PlayerData> getPlayers() {
-        return players;
+    public PlayerData getPlayer(String username) {
+        return players.get(username);
     }
-
     public void updatePlayer(PlayerData playerData, boolean isNew) throws UserError {
         String username = playerData.getUsername();
         if ((players.get(username) == null) != (isNew)) throw new UserError("Player doesn't exist");

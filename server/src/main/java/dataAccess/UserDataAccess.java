@@ -20,13 +20,9 @@ public class UserDataAccess extends DataAccess {
                 email, username, password, authToken);
         return authToken;
     }
-    public void validateAuthToken(String authToken) throws DataAccessError {
-        ArrayList<String> dbResponse = super.queryDB("SELECT authToken FROM userData WHERE authToken=?", authToken);
+    public ArrayList<String> validateAuthToken(String authToken) throws DataAccessError {
+        ArrayList<String> dbResponse = super.queryDB("SELECT username, authToken FROM userData WHERE authToken=?", authToken);
         if (dbResponse.isEmpty()) throw new DataAccessError("Unauthorized", 401);
-    }
-    public String getUsername(String authToken) throws DataAccessError {
-        ArrayList<String> dbResponse = super.queryDB("SELECT username FROM userData WHERE authToken=?", authToken);
-        if (dbResponse.isEmpty()) throw new DataAccessError("Username not found", 400);
-        else return dbResponse.getFirst();
+        return dbResponse;
     }
 }

@@ -8,12 +8,14 @@ import exceptions.UserError;
 import game.GameData;
 import pieces.Piece;
 
+import java.util.ArrayList;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class Service {
     private final UserDataAccess userDataAccess;
     private final GameDataAccess gameDataAccess;
+
     public Service() throws DataAccessError {
         userDataAccess = new UserDataAccess();
         gameDataAccess = new GameDataAccess();
@@ -43,47 +45,52 @@ public class Service {
         return userDataAccess.storeCredentials(email, username, password);
     }
 
-    public void authenticate(String authToken) throws DataAccessError {
-        userDataAccess.validateAuthToken(authToken);
+    /**
+     * @return username
+     */
+    public String authenticateUser(String authToken) throws DataAccessError {
+        return userDataAccess.validateAuthToken(authToken).getFirst();
     }
 
-    public String createGame(String authToken) throws DataAccessError, UserError {
-        String username = userDataAccess.getUsername(authToken);
+    public String createGame(String username) throws DataAccessError, UserError {
         return gameDataAccess.createGame(username);
     }
 
-    public GameData joinPlayer(String authToken, String gameID) throws DataAccessError, UserError {
-        String username = userDataAccess.getUsername(authToken);
-        return gameDataAccess.joinPlayer(username, gameID);
+    public GameData joinPlayer(String username, GameData gameData, String gameID) throws DataAccessError, UserError {
+        return gameDataAccess.joinPlayer(username, gameData, gameID);
     }
 
     /**
      * Validate authToken, validate gameID, check if client is in game, check if it is client's turn
      * @return username
      */
-    public String authenticate(String authToken, String gameID, boolean takingTurn) throws DataAccessError {
-        userDataAccess.validateAuthToken(authToken);
-        String username = userDataAccess.getUsername(authToken);
-        gameDataAccess.validateGameID(gameID);
+    public Object[] authenticateGame(String authToken, String gameID, boolean takingTurn) throws DataAccessError {
+        ArrayList<String> userData = userDataAccess.validateAuthToken(authToken);
+        String username = userData.getFirst();
+        GameData gameData = gameDataAccess.validateGameID(gameID);
         if (takingTurn) {
-            gameDataAccess.userInGame(gameID, username);
-            gameDataAccess.verifyClientTurn(gameID, username);
+            gameDataAccess.userInGame(gameData, username);
+            gameDataAccess.verifyClientTurn(gameData, username);
         }
-        return username;
+        return new Object[]{gameData, username};
     }
-    public void purchaseReqs(String username, String gameID, Piece pieceToBuy) throws DataAccessError {
-        gameDataAccess.verifyGamePhase(gameID, GameData.phaseType.Purchase);
-        gameDataAccess.verifyClientBalance(username, gameID, pieceToBuy);
+
+    public void purchaseReqs(String username, GameData gameData, Piece pieceToBuy) throws DataAccessError {
+        gameDataAccess.verifyGamePhase(gameData, GameData.phaseType.Purchase);
+        gameDataAccess.verifyClientBalance(username, gameData, pieceToBuy);
     }
-    public void placeReqs(String username, String gameID, Piece piece, int regionID) throws DataAccessError {
-        gameDataAccess.verifyGamePhase(gameID, GameData.phaseType.Place);
-        gameDataAccess.verifyClientPiece(username, gameID, piece);
-        gameDataAccess.verifyRegionControl(username, gameID, regionID);
+
+    public void placeReqs(String username, GameData gameData, Piece piece, int regionID) throws DataAccessError {
+        gameDataAccess.verifyGamePhase(gameData, GameData.phaseType.Place);
+        gameDataAccess.verifyClientPiece(username, gameData, piece);
+        gameDataAccess.verifyRegionControl(username, gameData, regionID);
     }
-    public GameData makePurchase(String username, String gameID, Piece pieceToBuy) throws DataAccessError, UserError {
-        return gameDataAccess.makePurchase(username, gameID, pieceToBuy);
+
+    public GameData makePurchase(String username, GameData gameData, String gameID, Piece pieceToBuy) throws DataAccessError, UserError {
+        return gameDataAccess.makePurchase(username, gameData, gameID, pieceToBuy);
     }
-    public GameData placePiece(String username, String gameID, Piece piece, int regionID) throws DataAccessError, UserError {
-        return gameDataAccess.placePiece(username, gameID, piece, regionID);
+
+    public GameData placePiece(String username, GameData gameData, String gameID, Piece piece, int regionID) throws DataAccessError, UserError {
+        return gameDataAccess.placePiece(username, gameData, gameID, piece, regionID);
     }
 }

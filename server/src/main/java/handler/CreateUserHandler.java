@@ -21,8 +21,8 @@ public class CreateUserHandler extends Handler {
             String password = reqBody.get("password");
             String confirm = reqBody.get("confirm");
             service.validateCredentials(email, username, password, confirm);
-            response.status(200);
             response.body(service.storeCredentials(email, username, password));
+            response.status(200);
         }
         catch (DataAccessError dataAccessError) {
             super.handleDataAccessError(response, dataAccessError);

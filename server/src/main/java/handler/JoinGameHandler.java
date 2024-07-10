@@ -3,6 +3,7 @@ package handler;
 import com.google.gson.Gson;
 import exceptions.DataAccessError;
 import exceptions.ServerError;
+import game.GameData;
 import service.Service;
 import spark.Request;
 import spark.Response;
@@ -19,9 +20,11 @@ public class JoinGameHandler extends Handler {
             String authToken = super.getAuthToken(request);
             HashMap<String, String> reqBody = super.getReqBody(request);
             String gameID = reqBody.get("gameID");
-            service.authenticate(authToken, gameID, false);
+            Object[] info = service.authenticateGame(authToken, gameID, false);
+            String username = (String) info[0];
+            GameData gameData = (GameData) info[1];
+            response.body(new Gson().toJson(service.joinPlayer(username, gameData, gameID)));
             response.status(200);
-            response.body(new Gson().toJson(service.joinPlayer(authToken, gameID)));
         }
         catch (DataAccessError dataAccessError) {
             super.handleDataAccessError(response, dataAccessError);

@@ -15,8 +15,8 @@ public class CreateGameHandler extends Handler {
     public Object createGame(Request request, Response response) throws ServerError {
         try {
             String authToken = super.getAuthToken(request);
-            service.authenticate(authToken);
-            response.body(new Gson().toJson(service.createGame(authToken)));
+            String username = service.authenticateUser(authToken);
+            response.body(new Gson().toJson(service.createGame(username)));
             response.status(200);
         }
         catch (DataAccessError dataAccessError) {

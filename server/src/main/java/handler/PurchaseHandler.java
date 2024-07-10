@@ -3,6 +3,7 @@ package handler;
 import com.google.gson.Gson;
 import exceptions.DataAccessError;
 import exceptions.ServerError;
+import game.GameData;
 import pieces.Piece;
 import service.Service;
 import spark.Request;
@@ -23,10 +24,12 @@ public class PurchaseHandler extends Handler {
             HashMap<String, String> reqBody = super.getReqBody(request);
             String gameID = reqBody.get("gameID");
             Piece pieceToBuy = Handler.stringToPiece(reqBody.get("pieceToBuy"));
-            String username = service.authenticate(authToken, gameID, true);
-            service.purchaseReqs(username, gameID, pieceToBuy);
+            Object[] info = service.authenticateGame(authToken, gameID, true);
+            GameData gameData = (GameData) info[0];
+            String username = (String) info[1];
+            service.purchaseReqs(username, gameData, pieceToBuy);
+            response.body(new Gson().toJson(service.makePurchase(username, gameData, gameID, pieceToBuy)));
             response.status(200);
-            response.body(new Gson().toJson(service.makePurchase(username, gameID, pieceToBuy)));
         }
         catch (DataAccessError dataAccessError) {
             super.handleDataAccessError(response, dataAccessError);
