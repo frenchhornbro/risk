@@ -1,16 +1,17 @@
 package handler;
 
 import com.google.gson.Gson;
+import exceptions.ClientError;
 import exceptions.DataAccessError;
 import exceptions.ServerError;
-import service.Service;
+import service.CreateGameService;
 import spark.Request;
 import spark.Response;
 
 public class CreateGameHandler extends Handler {
-    private final Service service;
+    private final CreateGameService service;
     public CreateGameHandler() throws DataAccessError {
-        service = new Service();
+        service = new CreateGameService();
     }
     public Object createGame(Request request, Response response) throws ServerError {
         try {
@@ -19,8 +20,8 @@ public class CreateGameHandler extends Handler {
             response.body(new Gson().toJson(service.createGame(username)));
             response.status(200);
         }
-        catch (DataAccessError dataAccessError) {
-            super.handleDataAccessError(response, dataAccessError);
+        catch (ClientError clientError) {
+            super.handleDataAccessError(response, clientError);
         }
         catch (Exception exception) {
             super.throwServerError(exception);

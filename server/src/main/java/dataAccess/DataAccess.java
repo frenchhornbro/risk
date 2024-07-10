@@ -1,10 +1,6 @@
 package dataAccess;
 
-import com.google.gson.Gson;
 import exceptions.DataAccessError;
-import exceptions.UserError;
-import game.GameData;
-import game.PlayerData;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -116,21 +112,5 @@ abstract public class DataAccess {
         catch (SQLException sqlException) {
             throw new DataAccessError("Error updating DB: " + sqlException.getMessage(), 500);
         }
-    }
-
-    protected GameData getGame(String gameID) throws DataAccessError {
-        ArrayList<String> gameData = queryDB("SELECT gameData FROM gameData WHERE gameID=?", gameID);
-        if (gameData.isEmpty()) throw new DataAccessError("Invalid game ID", 400);
-        return new Gson().fromJson(gameData.getFirst(), GameData.class);
-    }
-
-    protected void updateGame(String gameID, GameData gameData) throws DataAccessError {
-        updateDB(true, "UPDATE GameData SET gameData=? WHERE gameID=?", gameData, gameID);
-    }
-
-    protected GameData setPlayer(GameData gameData, String gameID, PlayerData playerData, boolean isNew) throws DataAccessError, UserError {
-        gameData.updatePlayer(playerData, isNew);
-        updateDB(true, "UPDATE GameData SET gameData=? WHERE gameID=?", gameData, gameID);
-        return gameData;
     }
 }

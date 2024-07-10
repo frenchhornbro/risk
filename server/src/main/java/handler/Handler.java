@@ -2,7 +2,7 @@ package handler;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
-import exceptions.DataAccessError;
+import exceptions.ClientError;
 import exceptions.ServerError;
 import pieces.Infantry;
 import pieces.Piece;
@@ -24,9 +24,9 @@ public abstract class Handler {
         return new Gson().fromJson(request.body(), new TypeToken<HashMap<String, String>>(){}.getType());
     }
 
-    protected void handleDataAccessError(Response response, DataAccessError dataAccessError) {
-        response.status(dataAccessError.getErrorCode());
-        response.body(new Gson().toJson(dataAccessError.getMessage()));
+    protected void handleDataAccessError(Response response, ClientError clientError) {
+        response.status(clientError.getErrorCode());
+        response.body(new Gson().toJson(clientError.getMessage()));
     }
 
     protected void throwServerError(Exception exception) throws ServerError {

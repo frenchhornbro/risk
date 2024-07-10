@@ -1,17 +1,18 @@
 package handler;
 
+import exceptions.ClientError;
 import exceptions.DataAccessError;
 import exceptions.ServerError;
-import service.Service;
+import service.CreateUserService;
 import spark.Request;
 import spark.Response;
 
 import java.util.HashMap;
 
 public class CreateUserHandler extends Handler {
-    public final Service service;
+    public final CreateUserService service;
     public CreateUserHandler() throws DataAccessError {
-        service = new Service();
+        service = new CreateUserService();
     }
     public Object createUser(Request request, Response response) throws ServerError {
         try {
@@ -24,8 +25,8 @@ public class CreateUserHandler extends Handler {
             response.body(service.storeCredentials(email, username, password));
             response.status(200);
         }
-        catch (DataAccessError dataAccessError) {
-            super.handleDataAccessError(response, dataAccessError);
+        catch (ClientError clientError) {
+            super.handleDataAccessError(response, clientError);
         }
         catch (Exception exception) {
             super.throwServerError(exception);

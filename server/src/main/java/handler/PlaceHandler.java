@@ -1,20 +1,21 @@
 package handler;
 
 import com.google.gson.Gson;
+import exceptions.ClientError;
 import exceptions.DataAccessError;
 import exceptions.ServerError;
 import game.GameData;
 import pieces.Piece;
-import service.Service;
+import service.PlaceService;
 import spark.Request;
 import spark.Response;
 
 import java.util.HashMap;
 
 public class PlaceHandler extends Handler {
-    public final Service service;
+    public final PlaceService service;
     public PlaceHandler() throws DataAccessError {
-        service = new Service();
+        service = new PlaceService();
     }
     public Object place(Request request, Response response) throws ServerError {
         try {
@@ -30,8 +31,8 @@ public class PlaceHandler extends Handler {
             response.body(new Gson().toJson(service.placePiece(username, gameData, gameID, piece, regionID)));
             response.status(200);
         }
-        catch (DataAccessError dataAccessError) {
-            super.handleDataAccessError(response, dataAccessError);
+        catch (ClientError clientError) {
+            super.handleDataAccessError(response, clientError);
         }
         catch (Exception exception) {
             super.throwServerError(exception);

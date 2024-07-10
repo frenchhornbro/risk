@@ -1,21 +1,22 @@
 package handler;
 
 import com.google.gson.Gson;
+import exceptions.ClientError;
 import exceptions.DataAccessError;
 import exceptions.ServerError;
 import game.GameData;
 import pieces.Piece;
-import service.Service;
+import service.PurchaseService;
 import spark.Request;
 import spark.Response;
 
 import java.util.HashMap;
 
 public class PurchaseHandler extends Handler {
-    private final Service service;
+    private final PurchaseService service;
 
     public PurchaseHandler() throws DataAccessError {
-        service = new Service();
+        service = new PurchaseService();
     }
 
     public Object purchase(Request request, Response response) throws ServerError {
@@ -31,8 +32,8 @@ public class PurchaseHandler extends Handler {
             response.body(new Gson().toJson(service.makePurchase(username, gameData, gameID, pieceToBuy)));
             response.status(200);
         }
-        catch (DataAccessError dataAccessError) {
-            super.handleDataAccessError(response, dataAccessError);
+        catch (ClientError clientError) {
+            super.handleDataAccessError(response, clientError);
         }
         catch (Exception exception) {
             super.throwServerError(exception);

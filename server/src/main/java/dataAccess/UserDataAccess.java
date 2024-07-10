@@ -3,26 +3,20 @@ package dataAccess;
 import exceptions.DataAccessError;
 
 import java.util.ArrayList;
-import java.util.UUID;
 
 public class UserDataAccess extends DataAccess {
     public UserDataAccess() throws DataAccessError {
 
     }
-    public void usernameNotTaken(String username) throws DataAccessError {
-        ArrayList<String> dbResponse = super.queryDB("SELECT username FROM userData WHERE username=?", username);
-        if (!dbResponse.isEmpty()) throw new DataAccessError("Username is taken", 400);
+    public ArrayList<String> getUsername(String username) throws DataAccessError {
+        return super.queryDB("SELECT username FROM userData WHERE username=?", username);
     }
-    public String storeCredentials(String email, String username, String password) throws DataAccessError {
-        String authToken = UUID.randomUUID().toString();
-        super.updateDB(true ,
+    public ArrayList<String> getUserData(String authToken) throws DataAccessError {
+        return super.queryDB("SELECT username, authToken FROM userData WHERE authToken=?", authToken);
+    }
+    public void createUserData(String email, String username, String password, String authToken) throws DataAccessError {
+        super.updateDB(true,
                 "INSERT INTO userData (email, username, password, authToken) VALUES (?, ?, ?, ?)",
                 email, username, password, authToken);
-        return authToken;
-    }
-    public ArrayList<String> validateAuthToken(String authToken) throws DataAccessError {
-        ArrayList<String> dbResponse = super.queryDB("SELECT username, authToken FROM userData WHERE authToken=?", authToken);
-        if (dbResponse.isEmpty()) throw new DataAccessError("Unauthorized", 401);
-        return dbResponse;
     }
 }

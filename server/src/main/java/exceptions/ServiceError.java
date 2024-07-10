@@ -1,8 +1,8 @@
 package exceptions;
 
-public class CredentialError extends Exception {
+public class ServiceError extends ClientError {
     private final int errorCode;
-    public CredentialError (String message, int errorNum) {
+    public ServiceError (String message, int errorNum) {
         super(message);
         errorCode = errorNum;
     }
