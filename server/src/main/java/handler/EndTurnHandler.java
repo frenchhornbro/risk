@@ -4,7 +4,7 @@ import spark.Request;
 import spark.Response;
 
 public class EndTurnHandler {
-    public Object endTurn(Request request, Response response) {
-
-    }
+	public Object endTurn(Request request, Response response) {
+		return response; //TODO: Remove
+	}
 }

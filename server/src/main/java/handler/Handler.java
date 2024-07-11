@@ -13,30 +13,32 @@ import spark.Response;
 import java.util.HashMap;
 
 public abstract class Handler {
-    public Handler() {
+	public Handler() {
 
-    }
-    protected String getAuthToken(Request request) {
-        return request.headers("authToken");
-    }
+	}
 
-    protected HashMap<String, String> getReqBody(Request request) {
-        return new Gson().fromJson(request.body(), new TypeToken<HashMap<String, String>>(){}.getType());
-    }
+	public static Piece stringToPiece(String pieceName) {
+		return switch (pieceName) {
+			case "Tank" -> new Tank();
+			default -> new Infantry();
+		};
+	}
 
-    protected void handleDataAccessError(Response response, ClientError clientError) {
-        response.status(clientError.getErrorCode());
-        response.body(new Gson().toJson(clientError.getMessage()));
-    }
+	protected String getAuthToken(Request request) {
+		return request.headers("authToken");
+	}
 
-    protected void throwServerError(Exception exception) throws ServerError {
-        throw new ServerError(exception.getMessage(), 500);
-    }
+	protected HashMap<String, String> getReqBody(Request request) {
+		return new Gson().fromJson(request.body(), new TypeToken<HashMap<String, String>>() {
+		}.getType());
+	}
 
-    public static Piece stringToPiece(String pieceName) {
-        return switch (pieceName) {
-            case "Tank" -> new Tank();
-            default -> new Infantry();
-        };
-    }
+	protected void handleDataAccessError(Response response, ClientError clientError) {
+		response.status(clientError.getErrorCode());
+		response.body(new Gson().toJson(clientError.getMessage()));
+	}
+
+	protected void throwServerError(Exception exception) throws ServerError {
+		throw new ServerError(exception.getMessage(), 500);
+	}
 }

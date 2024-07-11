@@ -4,7 +4,7 @@ import spark.Request;
 import spark.Response;
 
 public class ReinforceHandler {
-    public Object reinforce(Request request, Response response) {
-
-    }
+	public Object reinforce(Request request, Response response) {
+		return response; //TODO: Remove
+	}
 }

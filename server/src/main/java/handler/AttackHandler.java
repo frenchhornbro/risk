@@ -4,7 +4,7 @@ import spark.Request;
 import spark.Response;
 
 public class AttackHandler {
-    public Object attack(Request request, Response response) {
-
-    }
+	public Object attack(Request request, Response response) {
+		return response; //TODO: Remove
+	}
 }
